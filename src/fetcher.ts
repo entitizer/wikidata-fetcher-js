@@ -10,19 +10,28 @@ const AsyncEventEmitter: EventEmitter = require('async-eventemitter');
 // }
 
 export class Fetcher extends EventEmitter {
+    private expired = false;
     private isStopped = true
 
     constructor(private query: Query) {
         super();
+        if (!query || !(query instanceof Query)) {
+            throw new Error(`'query' argument is required`);
+        }
     }
 
     start() {
-        if (this.isStopped) {
-            throw new Error(`Fetcher is stopped`);
+        if (this.expired) {
+            throw new Error(`this Fetcher is expired`);
+        }
+        if (!this.isStopped) {
+            throw new Error(`Fetcher is running`);
         }
         if (this.listenerCount('item') === 0) {
             throw new Error(`No listeners for event: 'item'`);
         }
+        this.isStopped = false;
+
         this.next();
 
         return this;
@@ -44,6 +53,7 @@ export class Fetcher extends EventEmitter {
 
         return request(query, this.query.itemName)
             .then(ids => {
+                debug('got ids', ids);
                 const funcs = ids.map((id: string) => () => new Promise<any>((resolve) => {
                     if (this.isStopped) {
                         return Promise.resolve();
@@ -55,22 +65,34 @@ export class Fetcher extends EventEmitter {
                         return;
                     }
                     if (ids.length < this.query.pagesize) {
-                        this.isStopped = true;
+                        this.onEnd();
                         return;
                     }
                     return this.next();
                 });
             })
-            .catch(error => this.onError(error));
+            .catch(error => this.onEnd(error));
+    }
+
+    private onEnd(error?: Error) {
+        debug('on end');
+        if (error) {
+            this.onError(error);
+        }
+        this.expired = true;
+        this.isStopped = true;
+
+        return this.emit('end')
     }
 
     private onItem(id: string, done: () => void) {
+        debug('in item', id);
         if (this.isStopped || this.listenerCount('item') === 0) {
             return done();
         }
         return this.emit('item', id, (error: Error) => {
             if (error) {
-                return this.stop();
+                this.stop();
             }
             done();
         });
