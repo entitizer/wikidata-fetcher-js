@@ -1,7 +1,7 @@
 
 const debug = require('debug')('wikidata-fetcher');
 import { request } from './request';
-import { Query } from './query';
+import { IQuery } from './query';
 import * as EventEmitter from 'events';
 const AsyncEventEmitter: EventEmitter = require('async-eventemitter');
 
@@ -13,9 +13,9 @@ export class Fetcher extends EventEmitter {
     private expired = false;
     private isStopped = true
 
-    constructor(private query: Query) {
+    constructor(private query: IQuery) {
         super();
-        if (!query || !(query instanceof Query)) {
+        if (!query || !query.pagesize) {
             throw new Error(`'query' argument is required`);
         }
     }

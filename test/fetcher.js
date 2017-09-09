@@ -1,6 +1,5 @@
 
-const { Query } = require('../lib/query');
-const { Fetcher } = require('../lib/fetcher');
+const { Query, Fetcher, HumanQuery } = require('../lib');
 const assert = require('assert');
 
 describe('Fetcher', function () {
@@ -41,6 +40,25 @@ describe('Fetcher', function () {
 
         fetcher.on('item', (id, cb) => {
             // console.log(id)
+            cb()
+        });
+
+        fetcher.start();
+    });
+
+    it('should get humans from country: md', function (done) {
+        this.timeout(1000 * 60);
+        const query = new HumanQuery();
+        query.country('Q217')
+            .languageCode('ro')
+            .dead();
+        const fetcher = new Fetcher(query);
+
+        fetcher.on('error', done);
+        fetcher.on('end', done);
+
+        fetcher.on('item', (id, cb) => {
+            console.log('human', id)
             cb()
         });
 
