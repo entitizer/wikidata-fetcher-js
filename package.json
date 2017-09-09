@@ -1,42 +1,46 @@
 {
-    "name": "wikidata-fetcher",
-    "version": "0.0.1",
-    "description": "Wikidata fetcher",
-    "main": "./lib/index.js",
-    "types": "./types/index.d.ts",
-    "scripts": {
-        "pretest": "npm run tsc",
-        "test": "mocha -t 5000",
-        "tsc": "tsc",
-        "tscw": "tsc -w",
-        "preversion": "npm run tsc",
-        "postversion": "git push --follow-tags",
-        "prepublish": "npm run tsc"
-    },
-    "engines": {
-        "node": ">=4.0.0"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/entitizer/wikidata-fetcher-js.git"
-    },
-    "keywords": [
-        "wiki",
-        "wiki-entity",
-        "entity",
-        "wikidata"
-    ],
-    "author": "Dumitru Cantea",
-    "license": "ISC",
-    "bugs": {
-        "url": "https://github.com/entitizer/wikidata-fetcher-js/issues"
-    },
-    "homepage": "https://github.com/entitizer/wikidata-fetcher-js#readme",
-    "devDependencies": {
-        "@types/node": "^7.0.5",
-        "debug": "^2.6.8",
-        "mocha": "^3.2.0",
-        "typescript": "^2.4.2"
-    },
-    "dependencies": {}
+  "name": "wikidata-fetcher",
+  "version": "0.0.1",
+  "description": "Wikidata fetcher",
+  "main": "./lib/index.js",
+  "types": "./types/index.d.ts",
+  "scripts": {
+    "pretest": "npm run tsc",
+    "test": "mocha -t 5000",
+    "tsc": "tsc",
+    "tscw": "tsc -w",
+    "preversion": "npm run tsc",
+    "postversion": "git push --follow-tags",
+    "prepublish": "npm run tsc"
+  },
+  "engines": {
+    "node": ">=4.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/entitizer/wikidata-fetcher-js.git"
+  },
+  "keywords": [
+    "wiki",
+    "wiki-entity",
+    "entity",
+    "wikidata"
+  ],
+  "author": "Dumitru Cantea",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/entitizer/wikidata-fetcher-js/issues"
+  },
+  "homepage": "https://github.com/entitizer/wikidata-fetcher-js#readme",
+  "devDependencies": {
+    "@types/node": "^8.0.28",
+    "debug": "^2.6.8",
+    "mocha": "^3.2.0",
+    "typescript": "^2.4.2"
+  },
+  "dependencies": {
+    "async-eventemitter": "^0.2.3",
+    "es6-promise": "^4.1.1",
+    "isomorphic-fetch": "^2.2.1"
+  }
 }
