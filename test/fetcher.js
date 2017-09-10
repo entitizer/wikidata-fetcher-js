@@ -58,7 +58,24 @@ describe('Fetcher', function () {
         fetcher.on('end', done);
 
         fetcher.on('item', (id, cb) => {
-            console.log('human', id)
+            // console.log('human', id)
+            cb()
+        });
+
+        fetcher.start();
+    });
+
+    it('should get subclasses of: human sattlement', function (done) {
+        this.timeout(1000 * 60);
+        const query = new Query();
+        query.subclassOf('Q486972');
+        const fetcher = new Fetcher(query);
+
+        fetcher.on('error', done);
+        fetcher.on('end', done);
+
+        fetcher.on('item', (id, cb) => {
+            // console.log('human sattlement', id)
             cb()
         });
 

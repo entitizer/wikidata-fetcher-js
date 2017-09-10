@@ -6,8 +6,22 @@ export interface IQuery {
     readonly itemName: string
     readonly pagesize: number
 }
+export interface IQueryBuilder {
+    add(condition: QueryCondition): this
+    languageCode(lang: string): this
+    itemProperty(prop: string, value: string, filter?: 'NOT_EXISTS'): this
+    instanceOf(value: string): this
+    subclassOf(id: string): this
+}
 
-export class Query implements IQuery {
+export interface QueryOptions {
+    prefixes?: string
+    pagesize?: number
+    itemName?: string
+    queryBody?: string
+}
+
+export class Query implements IQuery, IQueryBuilder {
     private offset = 0
     private conditions: string[] = []
 
@@ -18,12 +32,8 @@ export class Query implements IQuery {
         return this.options.pagesize;
     }
 
-    constructor(private options?: { prefixes?: string, pagesize?: number, itemName?: string, queryBody?: string }) {
+    constructor(private options?: QueryOptions) {
         this.options = Object.assign({ pagesize: 50, itemName: 'item' }, options || {});
-    }
-
-    country(id: string) {
-        return this.itemProperty('P27', id);
     }
 
     languageCode(lang: string) {
@@ -59,6 +69,10 @@ export class Query implements IQuery {
         return this.itemProperty('P31', value);
     }
 
+    subclassOf(value: string) {
+        return this.itemProperty('P279', value);
+    }
+
     toString(incrementPage?: boolean) {
         const lines: string[] = ['SELECT', '?' + this.options.itemName, 'WHERE', '{'];
         lines.push(this.options.queryBody || this.conditions.join(' '));
@@ -79,5 +93,39 @@ export class Query implements IQuery {
         }
 
         return lines.join(' ');
+    }
+}
+
+export class QueryWrapper implements IQuery, IQueryBuilder {
+    constructor(protected query: Query = new Query()) { }
+
+    add(condition: string): this {
+        this.query.add(condition);
+        return this;
+    }
+    languageCode(lang: string): this {
+        this.query.languageCode(lang);
+        return this;
+    }
+    itemProperty(prop: string, value: string, filter?: "NOT_EXISTS"): this {
+        this.query.itemProperty(prop, value, filter);
+        return this;
+    }
+    instanceOf(value: string): this {
+        this.query.instanceOf(value);
+        return this;
+    }
+    subclassOf(id: string) {
+        return this.itemProperty('P279', id);
+    }
+
+    toString(incrementPage?: boolean): string {
+        return this.query.toString(incrementPage);
+    }
+    get itemName() {
+        return this.query.itemName;
+    }
+    get pagesize() {
+        return this.query.pagesize;
     }
 }

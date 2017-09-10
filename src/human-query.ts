@@ -1,10 +1,14 @@
 
-import { Query } from './query';
+import { Query, QueryWrapper } from './query';
 
-export class HumanQuery extends Query {
-    constructor(options?: { prefixes?: string, pagesize?: number, itemName?: string }) {
-        super(options);
+export class HumanQuery extends QueryWrapper {
+    constructor(query: Query) {
+        super(query);
         this.instanceOf('Q5');
+    }
+
+    country(id: string) {
+        return this.itemProperty('P27', id);
     }
 
     alive() {
